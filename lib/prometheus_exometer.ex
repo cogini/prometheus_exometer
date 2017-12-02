@@ -54,6 +54,10 @@ defmodule PrometheusExometer do
     [results, format_scrape_duration(config, start_time), format_namespace_up(config)]
   end
 
+  def scrape do
+    scrape(%{})
+  end
+
   defp collect_children({exometer_name, exometer_type, :enabled}, parents) do
     info = :exometer.info(exometer_name)
     options = info[:options]
@@ -200,17 +204,19 @@ defmodule PrometheusExometer do
   defp convert_name(name, info, config, []) do
     options = info[:options]
     prometheus_options = options[:prometheus] || %{}
+    namespace =config[:namespace] || []
     # Lager.debug("convert_name default #{inspect name} #{inspect info}")
-    {config.namespace ++ name ++ suffix(prometheus_options), []}
+    {namespace ++ name ++ suffix(prometheus_options), []}
   end
   defp convert_name(name, info, config, [module | rest]) do
     options = info[:options]
     prometheus_options = options[:prometheus] || %{}
+    namespace =config[:namespace] || []
     # Lager.debug("module #{module} name #{inspect name} options #{inspect options}")
     case module.prometheus_convert_name(name, options) do
       {new_name, labels} ->
         # Lager.debug("convert_name module #{module} #{inspect name} #{inspect new_name} #{inspect labels}")
-        name = config.namespace ++ new_name ++ suffix(prometheus_options)
+        name = namespace ++ new_name ++ suffix(prometheus_options)
         {name, labels}
       _ ->
         convert_name(name, info, config, rest)
@@ -286,7 +292,7 @@ defmodule PrometheusExometer do
   @doc "Format scrape duration metric"
   @spec format_scrape_duration(Map.t, :erlang.timestamp) :: iodata
   def format_scrape_duration(config, start_time) do
-    namespace = Map.get(config, :namespace, [])
+    namespace = config[:namespace] || []
     duration = :timer.now_diff(:os.timestamp(), start_time) / 1_000_000
     format_data(namespace ++ [:scrape_duration_seconds], [], duration)
   end
