@@ -1,26 +1,24 @@
 defmodule PrometheusExometer do
-  @moduledoc false
+  @moduledoc "Convert Exometer metrics to Prometheus format"
 
   require Lager
 
-  @app :bounce
+  # @doc "Initialize metrics from modules"
+  # def init do
+  #   modules = Application.get_env(@app, :prometheus_modules, [])
+  #   Enum.each(modules, fn(module) ->
+  #     exports = module.module_info(:exports)
+  #     if Keyword.has_key?(exports, :prometheus_init) do
+  #       # Lager.error("#{module}.prometheus_init")
+  #       module.prometheus_init([])
+  #     end
+  #   end)
+  # end
 
-  @doc "Initialize metrics from modules"
-  def init do
-    modules = Application.get_env(@app, :prometheus_modules, [])
-    Enum.each(modules, fn(module) ->
-      exports = module.module_info(:exports)
-      if Keyword.has_key?(exports, :prometheus_init) do
-        # Lager.error("#{module}.prometheus_init")
-        module.prometheus_init([])
-      end
-    end)
-  end
-
-  @doc "Get modules which have a name converter callback defined"
-  @spec get_name_converters(list(module)) :: list(module)
-  def get_name_converters([]), do: []
-  def get_name_converters(modules) do
+  @doc "Get modules with name converter callback defined"
+  @spec get_converters(list(module)) :: list(module)
+  def get_converters([]), do: []
+  def get_converters(modules) do
     Enum.filter(modules, fn(module) ->
       exports = module.module_info(:exports)
       Keyword.has_key?(exports, :prometheus_convert_name)
@@ -29,14 +27,12 @@ defmodule PrometheusExometer do
 
   @doc """
   Get metric data in Prometheus format
-  This is called by the HTTP endpoint
-  """
-  @spec scrape(list(atom), list(module)) :: iodata
-  def scrape(namespace, modules)  do
-    start_time = :os.timestamp()
 
-    converters = get_name_converters(modules)
-    config = %{namespace: namespace, converters: converters}
+  config = %{namespace: list(atom), converters: list(module)}
+  """
+  @spec scrape(Map.t) :: iodata
+  def scrape(config) do
+    start_time = :os.timestamp()
 
     entries = :exometer.find_entries([:_])
     entries = Enum.sort(entries)
@@ -55,7 +51,7 @@ defmodule PrometheusExometer do
     end)
 
     # {results, _names_seen} = List.foldl(entries, {[], %{}}, &format_entry/2)
-    [results, format_scrape_duration(namespace, start_time), format_namespace_up(namespace)]
+    [results, format_scrape_duration(config, start_time), format_namespace_up(config)]
   end
 
   defp collect_children({exometer_name, exometer_type, :enabled}, parents) do
@@ -192,8 +188,12 @@ defmodule PrometheusExometer do
 
   # Add namespace and standard suffixes according to Prometheus conventions
   # Convert other metrics into standard format
+  @spec convert_name(list(atom), Keyword.t, Map.t) :: {list, list}
+  defp convert_name(name, info, %{converters: converters} = config) do
+    convert_name(name, info, config, converters)
+  end
   defp convert_name(name, info, config) do
-    convert_name(name, info, config, config.converters)
+    convert_name(name, info, config, [])
   end
 
   # Default if no converter matches
@@ -284,19 +284,19 @@ defmodule PrometheusExometer do
 
 
   @doc "Format scrape duration metric"
-  @spec format_scrape_duration(list(atom), :erlang.timestamp) :: iodata
-  def format_scrape_duration(prefix, start_time) do
+  @spec format_scrape_duration(Map.t, :erlang.timestamp) :: iodata
+  def format_scrape_duration(config, start_time) do
+    namespace = Map.get(config, :namespace, [])
     duration = :timer.now_diff(:os.timestamp(), start_time) / 1_000_000
-    format_data(prefix ++ [:scrape_duration_seconds], [], duration)
+    format_data(namespace ++ [:scrape_duration_seconds], [], duration)
   end
 
   @doc "Format up metric"
-  @spec format_namespace_up(list) :: iodata
-  def format_namespace_up([]), do: []
-  def format_namespace_up(namespace) when is_list(namespace) do
+  @spec format_namespace_up(Map.t) :: iodata
+  def format_namespace_up(%{namespace: namespace}) when is_list(namespace) do
     format_data(namespace ++ ["up"], [], 1)
   end
-
+  def format_namespace_up(_), do: []
 
   @doc "Format metric header"
   @spec format_header(:exometer.name, list, map, :exometer.name, atom) :: iodata

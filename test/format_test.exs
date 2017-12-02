@@ -66,11 +66,11 @@ defmodule PrometheusExometer.FormatTest do
 
   test "format_scrape_duration" do
     start_time = :os.timestamp() 
-    assert bin(PrometheusExometer.format_scrape_duration([:foo, :bar], start_time)) == "foo_bar_scrape_duration_seconds 0.0\n"
+    assert bin(PrometheusExometer.format_scrape_duration(%{namespace: [:foo, :bar]}, start_time)) == "foo_bar_scrape_duration_seconds 0.0\n"
   end
 
   test "format_namespace_up" do
-    assert bin(PrometheusExometer.format_namespace_up([:foo, :bar])) == "foo_bar_up 1\n"
+    assert bin(PrometheusExometer.format_namespace_up(%{namespace: [:foo, :bar]})) == "foo_bar_up 1\n"
   end
 
   test "format_header" do
