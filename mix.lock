@@ -1,0 +1,7 @@
+%{"bear": {:git, "https://github.com/folsom-project/bear.git", "2c831ecf77dbae2de6cd587170bfadbdebefbb0b", [tag: "0.8.3"]},
+  "exometer_core": {:git, "https://github.com/Feuerlabs/exometer_core.git", "c4afd6d095c8eef7c5447133a033b9165f53da02", [tag: "1.5.0"]},
+  "folsom": {:git, "git://github.com/folsom-project/folsom", "0948c5f7a2221cc7c4975d042b13c84bb9387517", [tag: "0.8.5"]},
+  "hut": {:git, "git://github.com/tolbrino/hut.git", "025540398478ab6f95932c3234382ac5bb21ad3e", [tag: "v1.1.1"]},
+  "meck": {:git, "https://github.com/eproxus/meck", "70d6a33ce7407029dc59e22a5b3c1c61c1348b23", [tag: "0.8.4"]},
+  "parse_trans": {:git, "git://github.com/uwiger/parse_trans.git", "6f3645afb43c7c57d61b54ef59aecab288ce1013", [tag: "3.0.0"]},
+  "setup": {:git, "https://github.com/uwiger/setup.git", "0dd47eb7e298b92c059ad340244dcfc81d6b191c", []}}
