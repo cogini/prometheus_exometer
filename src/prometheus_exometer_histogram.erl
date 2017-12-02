@@ -57,7 +57,7 @@ probe_init(Name, _Type, Options) ->
     % SubOptions = ChildOptions ++ [{prometheus, PrometheusOptions}],
     SubOptions = ChildOptions ++ [{prometheus, maps:merge(PrometheusOptions, #{sub => true})}],
     exometer_admin:set_default(Name ++ ['_'], St#st.sub_type,
-                               [{options, SubOptions}, {module, prometheus_histogram}]),
+                               [{options, SubOptions}, {module, prometheus_exometer_histogram}]),
 
     % process_flag(min_heap_size, 40000),
     {ok, St}.
