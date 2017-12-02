@@ -21,8 +21,8 @@ defmodule PrometheusExometer.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
+      {:setup, github: "uwiger/setup", manager: :rebar, override: true} # fix for https://github.com/uwiger/setup/issues/24
     ]
   end
 end
