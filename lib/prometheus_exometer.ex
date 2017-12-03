@@ -1,19 +1,7 @@
 defmodule PrometheusExometer do
   @moduledoc "Convert Exometer metrics to Prometheus format"
 
-  require Lager
-
-  # @doc "Initialize metrics from modules"
-  # def init do
-  #   modules = Application.get_env(@app, :prometheus_modules, [])
-  #   Enum.each(modules, fn(module) ->
-  #     exports = module.module_info(:exports)
-  #     if Keyword.has_key?(exports, :prometheus_init) do
-  #       # Lager.error("#{module}.prometheus_init")
-  #       module.prometheus_init([])
-  #     end
-  #   end)
-  # end
+  # require Lager
 
   @doc "Get modules with name converter callback defined"
   @spec get_converters(list(module)) :: list(module)
@@ -184,8 +172,8 @@ defmodule PrometheusExometer do
       format_data(name, labels, convert_unit(prometheus_options, data_points[:one]))
     ]
   end
-  defp format_data(name, labels, exometer_name, exometer_type, prometheus_options) do
-    Lager.debug("Skipping #{inspect name} #{inspect labels} #{inspect exometer_name} #{inspect exometer_type} #{inspect prometheus_options}")
+  defp format_data(_name, _labels, _exometer_name, _exometer_type, _prometheus_options) do
+    # Lager.debug("Skipping #{inspect name} #{inspect labels} #{inspect exometer_name} #{inspect exometer_type} #{inspect prometheus_options}")
     []
   end
 
