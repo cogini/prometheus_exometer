@@ -153,24 +153,27 @@ defmodule PrometheusExometer.Metrics do
     :exometer.get_value(combine_name_labels(name, labels))
   end
 
-
-  @doc "Ensure that metric exists and is of given type"
-  @spec ensure(:exometer.name, :exometer.type) :: :ok | {:error, any}
-  def ensure(name, type), do: :exometer.ensure(name, type, [])
-
-  @spec ensure(:exometer.name, :exometer.type, :exometer.options) :: :ok | {:error, any}
-  def ensure(name, type, options), do: :exometer.ensure(name, type, options)
-
+  @doc "Ensure that a metric exists with the specified keyword under the parent metric"
   @spec ensure_child(:exometer.name, Keyword.t) :: :ok | {:error, any}
   def ensure_child(name, labels) do
     :exometer_admin.auto_create_entry(combine_name_labels(name, labels))
   end
 
-  @spec ensure_children(:exometer.name, list) :: :ok | {:error, any}
-  def ensure_children(name, labels_list) do
-    for labels <- labels_list, do: ensure_child(name, labels)
-  end
+  # Just a wrapper on :exometer.ensure
+  # @doc "Ensure that metric exists and is of given type"
+  # @spec ensure(:exometer.name, :exometer.type) :: :ok | {:error, any}
+  # def ensure(name, type), do: :exometer.ensure(name, type, [])
 
+  # @spec ensure(:exometer.name, :exometer.type, :exometer.options) :: :ok | {:error, any}
+  # def ensure(name, type, options), do: :exometer.ensure(name, type, options)
+
+  # Unused, it seems
+  # @spec ensure_children(:exometer.name, list) :: :ok | {:error, any}
+  # def ensure_children(name, labels_list) do
+  #   for labels <- labels_list, do: ensure_child(name, labels)
+  # end
+
+  @doc "Combine base metric name with labels"
   @spec combine_name_labels(:exometer.name, Keyword.t) :: :exometer.name
   def combine_name_labels(name, labels) do
     # It's dangerous in general to convert to atoms,
@@ -180,27 +183,18 @@ defmodule PrometheusExometer.Metrics do
     end
   end
 
-
-  # Old public interface for logging metrics
-
-  @spec log_duration(:exometer.name, :erlang.timestamp) :: :ok | {:error, any}
-  def log_duration(name, start_time) when is_list(name) do
-    end_time = :os.timestamp()
-    delta_time = :timer.now_diff(end_time, start_time)
-    observe(name, delta_time)
-  end
-
-  @spec tc(:exometer.name, module, atom, list(term)) :: any
+  @doc "Record duration in ms of a function call, like :timer.tc"
+  @spec tc(:exometer.name, module, atom, list) :: any
   def tc(name, mod, fun, args) do
-    {time, value} = :timer.tc(mod, fun, args)
-    observe(name, time)
+    {duration, value} = :timer.tc(mod, fun, args)
+    observe(name, duration)
     value
   end
 
-  @spec tc(:exometer.name, list, module, atom, list(term)) :: any
+  @spec tc(:exometer.name, Keyword.t, module, atom, list) :: any
   def tc(name, labels, mod, fun, args) do
-    {time, value} = :timer.tc(mod, fun, args)
-    observe(name, labels, time)
+    {duration, value} = :timer.tc(mod, fun, args)
+    observe(name, labels, duration)
     value
   end
 
