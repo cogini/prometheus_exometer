@@ -1,23 +1,44 @@
 # prometheus_exometer
 
-This library adds support to Exometer to generate Prometheus metrics
-which use labels. 
+This library adds support to [Exometer](https://github.com/Feuerlabs/exometer_core)
+to generate [Prometheus](https://prometheus.io/) metrics output. It reads the
+Exometer metrics you define and generates a report in text format.
+
+In a minimal system, you can set up a [Cowboy](https://github.com/ninenines/cowboy)
+handler to respond to metrics requests, or you can add a route/endpoint to
+[Phoenix](http://phoenixframework.org/).
+
+This module supports the standard Exometer probe types such as counter,
+as well as using [labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels),
+which is more natural for Prometheus, e.g.. 
+
+    api_http_requests_total{method="POST", handler="/messages"}
+
+## Prometheus histograms vs Exometer historgrams 
+
+There is a fundamental difference between Exometer histograms and Exometer histograms.
+Exometer histogram buckets are dynamic, so when you get e.g. the 95% bucket, it depends
+on the actual samples. Prometheus histograms have a static range, and are perhaps best
+thought of as having multiple counters, one for each bucket. Because of this, we need
+to pre-define the bucket ranges that we will use.   
 
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `prometheus_exometer` to your list of dependencies in `mix.exs`:
+Add `prometheus_exometer` to your list of deps in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:prometheus_exometer, "~> 0.1.0"}
+    {:prometheus_exometer, github: "cogini/prometheus_exometer"},
   ]
 end
 ```
+This will pull in Exometer and its dependencies as well.
 
-Configure Exometer to use probes 
+Configure Exometer to use the custom
+[probes](https://github.com/Feuerlabs/exometer_core/blob/master/doc/README.md#Built-in_entries_and_probes)
+defined in this module. 
 
 ```elixir
 config :exometer_core,
@@ -25,14 +46,12 @@ config :exometer_core,
     {[:_], :history, [module: :exometer_folsom]},
     {[:_], :prometheus_counter, [module: :prometheus_exometer_counter]},
     {[:_], :prometheus_gauge, [module: :prometheus_exometer_gauge]},
-    {[:_], :prometheus_histogram, [
-      module: :prometheus_exometer_histogram,
+    {[:_], :prometheus_histogram, [module: :prometheus_exometer_histogram,
       options: [time_span: 300_000, truncate: :false, histogram_module: :exometer_slide, keep_high: 100,
                 prometheus: %{export_buckets: :true}
                ],
     ]},
-    {[:_], :histogram, [
-      module: :exometer_histogram,
+    {[:_], :histogram, [module: :exometer_histogram,
       options: [time_span: 300_000, truncate: :false, histogram_module: :exometer_slide, keep_high: 100,
                 prometheus: %{export_quantiles: :true}
               ],
@@ -49,7 +68,3 @@ config :exometer_core,
     {[:responses], :prometheus_counter, [prometheus: %{description: "Total number of responses"}]},
   ]
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/prometheus_exometer](https://hexdocs.pm/prometheus_exometer).
