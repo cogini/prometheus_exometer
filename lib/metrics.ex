@@ -19,7 +19,7 @@ defmodule PrometheusExometer.Metrics do
   # TODO: check that value is > 0 for counter
   @type name :: :exometer.name
   @type labels :: Keyword.t
-  @type value :: :exometer.value
+  @type value :: any
   @type error :: {:error, any}
 
   @doc "Increment counter or gauge"
@@ -68,14 +68,14 @@ defmodule PrometheusExometer.Metrics do
   def set_duration(name, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
-    set(name, delta_time)
+    set(name, delta_time / 1)
   end
 
   @spec set_duration(name, labels, :erlang.timestamp) :: :ok
   def set_duration(name, labels, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
-    set(name, labels, delta_time)
+    set(name, labels, delta_time / 1)
   end
 
 
@@ -91,7 +91,7 @@ defmodule PrometheusExometer.Metrics do
   # Histogram and Summary
 
   @doc "Observe current value for histogram or summary"
-  @spec observe(name, labels, float) :: :ok
+  @spec observe(name, labels, float) :: :ok | error
   def observe(name, labels, value) when is_list(labels) do
     # TODO: don't allow label of "le" or "quantile"
     # TODO: Validate name: ASCII letters and digits, underscores and colons.
@@ -102,21 +102,21 @@ defmodule PrometheusExometer.Metrics do
     update(name, labels, value)
   end
 
-  @spec observe(name, value) :: :ok
+  @spec observe(name, value) :: :ok | error
   def observe(name, value), do: update(name, value)
 
-  @spec observe_duration(name, :erlang.timestamp) :: :ok
+  @spec observe_duration(name, :erlang.timestamp) :: :ok | error
   def observe_duration(name, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
-    observe(name, delta_time)
+    observe(name, delta_time / 1)
   end
 
-  @spec observe_duration(name, labels, :erlang.timestamp) :: :ok
+  @spec observe_duration(name, labels, :erlang.timestamp) :: :ok | error
   def observe_duration(name, labels, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
-    observe(name, labels, delta_time)
+    observe(name, labels, delta_time / 1)
   end
 
   # TODO
@@ -139,27 +139,26 @@ defmodule PrometheusExometer.Metrics do
   def update(name, labels, value) do
     :exometer.update_or_create(combine_name_labels(name, labels), value)
   end
-  @spec update(name, {labels, value} | value) :: :ok | error
+  @spec update(name, value) :: :ok | error
   def update(name, {labels, value} = tuple_value) when is_tuple(tuple_value) do
     :exometer.update_or_create(combine_name_labels(name, labels), value)
   end
-  @spec update(name, value) :: :ok | error
   def update(name, value) do
     :exometer.update_or_create(name, value)
   end
 
-  @spec get_value(name) :: {:ok, any} | error
+  @spec get_value(name) :: {:ok, any} | {:error, :not_found}
   def get_value(name) do
     :exometer.get_value(name)
   end
 
-  @spec get_value(name, labels) :: {:ok, any} | error
+  @spec get_value(name, labels) :: {:ok, any} | {:error, :not_found}
   def get_value(name, labels) do
     :exometer.get_value(combine_name_labels(name, labels))
   end
 
   @doc "Ensure that a metric exists with the specified keyword under the parent metric"
-  @spec ensure_child(name, labels) :: :ok | {:error, any}
+  @spec ensure_child(name, labels) :: :ok | error
   def ensure_child(name, labels) do
     :exometer_admin.auto_create_entry(combine_name_labels(name, labels))
   end
@@ -192,14 +191,14 @@ defmodule PrometheusExometer.Metrics do
   @spec tc(name, module, atom, list) :: any
   def tc(name, mod, fun, args) do
     {duration, value} = :timer.tc(mod, fun, args)
-    observe(name, duration)
+    observe(name, duration / 1)
     value
   end
 
   @spec tc(name, labels, module, atom, list) :: any
   def tc(name, labels, mod, fun, args) do
     {duration, value} = :timer.tc(mod, fun, args)
-    observe(name, labels, duration)
+    observe(name, labels, duration / 1)
     value
   end
 

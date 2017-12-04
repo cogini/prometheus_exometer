@@ -99,7 +99,7 @@ process_options(St, Options0) ->
                end, St, Options).
 
 -spec clean_options(Options) -> Options when
-      Options :: list(proplist:property()).
+      Options :: list(proplists:property()).
 clean_options(Options) ->
     Description = proplists:get_value(description, Options),
     Options1 = proplists:delete(description, Options),

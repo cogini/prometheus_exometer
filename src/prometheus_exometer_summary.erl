@@ -137,7 +137,7 @@ process_options_prometheus(St0, Options) ->
     %           end, St1, MergedOptions).
 
 -spec clean_options(Options) -> Options when
-      Options :: list(proplist:property()).
+      Options :: list(proplists:property()).
 clean_options(Options) ->
     PrometheusOptions = proplists:get_value(prometheus, Options),
     Options1 = proplists:delete(prometheus, Options),
