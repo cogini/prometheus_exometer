@@ -18,8 +18,8 @@ defmodule PrometheusExometer.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      # extra_applications: [:logger]
       # extra_applications: [:lager, :logger]
+      extra_applications: [:lager]
     ]
   end
 
@@ -27,7 +27,7 @@ defmodule PrometheusExometer.Mixfile do
   defp deps do
     [
       # {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
-      # {:exlager, github: "reachfh/exlager", branch: "metadata"},
+      {:exlager, github: "reachfh/exlager", branch: "metadata"},
       {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
       # {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},

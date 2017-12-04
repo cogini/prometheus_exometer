@@ -31,7 +31,7 @@ config :exometer_core,
 
 # config :logger, level: :warn
 
-# config :lager,
-#   handlers: [
-#     lager_console_backend: :warn,
-#   ]
+config :lager,
+  handlers: [
+    lager_console_backend: :warn,
+  ]
