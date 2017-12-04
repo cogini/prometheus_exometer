@@ -14,7 +14,6 @@ defmodule PrometheusExometer.Metrics do
   and that's the default output unit instead of seconds.
   
   """
-  require Lager
 
   # TODO: check that value is > 0 for counter
   @type name :: :exometer.name

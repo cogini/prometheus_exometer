@@ -28,3 +28,10 @@ config :exometer_core,
     {[:requests], :prometheus_counter, [prometheus: %{description: "Total number of requests"}]},
     {[:responses], :prometheus_counter, [prometheus: %{description: "Total number of responses"}]},
   ]
+
+# config :logger, level: :warn
+
+# config :lager,
+#   handlers: [
+#     lager_console_backend: :warn,
+#   ]

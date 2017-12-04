@@ -5,8 +5,12 @@ defmodule PrometheusExometer.Mixfile do
     [
       app: :prometheus_exometer,
       version: "0.1.0",
-      elixir: "> 1.4.2",
+      elixir: "> 1.4.0",
       start_permanent: Mix.env == :prod,
+      dialyzer: [
+        plt_add_deps: true,
+        # flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs],
+      ],
       deps: deps()
     ]
   end
@@ -15,17 +19,18 @@ defmodule PrometheusExometer.Mixfile do
   def application do
     [
       # extra_applications: [:logger]
-      extra_applications: [:lager, :logger]
+      # extra_applications: [:lager, :logger]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:exlager, github: "reachfh/exlager", branch: "metadata"},
+      # {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      # {:exlager, github: "reachfh/exlager", branch: "metadata"},
       {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
-      {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      # {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
     ]
   end
 end

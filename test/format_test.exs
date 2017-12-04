@@ -45,7 +45,7 @@ defmodule PrometheusExometer.FormatTest do
   end
 
   test "format_labels" do
-    assert PrometheusExometer.format_labels([]) == ""
+    assert PrometheusExometer.format_labels([]) == []
     assert PrometheusExometer.format_labels(["foo"]) == ["foo"]
     assert bin(PrometheusExometer.format_labels([{"foo", "bar"}, "this=\"that\""])) == ~s|foo="bar",this="that"|
   end

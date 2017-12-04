@@ -1,4 +1,5 @@
 %{"bear": {:git, "https://github.com/folsom-project/bear.git", "2c831ecf77dbae2de6cd587170bfadbdebefbb0b", [tag: "0.8.3"]},
+  "dialyxir": {:hex, :dialyxir, "0.5.1", "b331b091720fd93e878137add264bac4f644e1ddae07a70bf7062c7862c4b952", [], [], "hexpm"},
   "exlager": {:git, "https://github.com/reachfh/exlager.git", "255b0424c7bea7b813174f0e76fab2a566c5bd5b", [branch: "metadata"]},
   "exometer_core": {:git, "https://github.com/Feuerlabs/exometer_core.git", "c4afd6d095c8eef7c5447133a033b9165f53da02", [tag: "1.5.0"]},
   "folsom": {:git, "git://github.com/folsom-project/folsom", "0948c5f7a2221cc7c4975d042b13c84bb9387517", [tag: "0.8.5"]},
