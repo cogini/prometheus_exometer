@@ -15,14 +15,15 @@ which is more natural for Prometheus, e.g..
     api_http_requests_total{method="POST", handler="/messages"}
 
 It does this by converting the labels into keyword=value atoms which it appends to the
-Exometer name, which is normally a list of atoms. You should not create a lot of different
-labels, e.g. based on user input, as the Erlang VM has a relatively small fixed limit.
+Exometer name, which is normally a list of atoms. It is, in general, bad practice to
+create a lot of atoms, as the Erlang VM has a relatively small fixed limit. Specifically,
+don't create labels based on user input.
 
-## Philosophy
+## Example
 
-The philosophy that we generally use is to record atom codes for handler,
+An example of creating metrics is to record atom codes for handler,
 action and detail on responses. The handler indicates the module which created
-the response. The action is standard set like "success", "redirect",
+the response. The action is a standard set like "success", "redirect",
 "reject", "error" e.g. HTTP 200/300/400/500. Detail depends on the module,
 e.g. if we reject DDOS traffic based on the HTTP user agent, it might be
 "agent".
@@ -37,7 +38,6 @@ The result might look something like this for an API service:
     api_responses{handler="db",action="invalid",detail="unknown"} 20
     api_responses{handler="route",action="redirect",detail="legacy"} 10
     api_responses{handler="api",action="success",detail="ok"} 1000
-
 
 ## Prometheus histograms vs Exometer historgrams
 
@@ -58,7 +58,7 @@ def deps do
   ]
 end
 ```
-This will pull in Exometer and its dependencies as well.
+This will pull in Exometer and its dependencies.
 
 Configure Exometer to use the custom
 [probes](https://github.com/Feuerlabs/exometer_core/blob/master/doc/README.md#Built-in_entries_and_probes)
@@ -99,11 +99,11 @@ While it's possible to define Exometer metrics programmatically in your code,
 due to the loose relationship between independent Erlang applications, it's
 easy to get into race conditions on startup. Defining metrics is in
 `predefined` section of the `exometer_core` config generally works well, though
-it is a bit messy.
+they syntax is a bit messy.
 
 In order to make things more resilent, the metrics recording functions in this
 library call `:exometer.update_or_create/2`. The effect is that the metric will
-be created the first time it is used, but it will use the settings in the
+be created the first time it is used based on the the settings in the
 `defaults` section of the `exometer_core` config.
 
 If you have specific settings that you want, e.g. histogram buckets, then you
@@ -111,7 +111,7 @@ should define the metric before you use it, either in the `predefined` section
 or in your application initialization.
 
 Following is an example Cowboy "middleware" which uses an init function to
-create metrics. It uses the low leve `:exometer.update/2` since it knows that the
+create metrics. It uses the low level `:exometer.update/2` since it knows that the
 metrics are there, though `PrometheusMiddleware.Metrics.update/2` would work as well.
 
 ```elixir
