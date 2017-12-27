@@ -10,7 +10,7 @@ defmodule PrometheusExometer.Mixfile do
       start_permanent: Mix.env == :prod,
       description: description(),
       package: package(),
-      source_url: "https://github.com/cogini/prometheus_exometer"
+      source_url: "https://github.com/cogini/prometheus_exometer",
       dialyzer: [
         plt_add_deps: true,
         # flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs],
