@@ -23,7 +23,7 @@ defmodule PrometheusExometer.Mixfile do
   def application do
     [
       # extra_applications: [:lager, :logger]
-      extra_applications: [:lager]
+      # extra_applications: [:lager]
     ]
   end
 
