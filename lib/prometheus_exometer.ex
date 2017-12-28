@@ -1,6 +1,7 @@
 defmodule PrometheusExometer do
   @moduledoc "Convert Exometer metrics to Prometheus format"
 
+  @typedoc "Name of a metric"
   @type name :: :exometer.name
   @type labels :: Keyword.t
   @type value :: any
@@ -8,7 +9,7 @@ defmodule PrometheusExometer do
 
   # require Lager
 
-  @doc "Get modules with name converter callback defined"
+  @doc "Get modules which have a prometheus_convert_name callback defined"
   @spec get_converters(list(module)) :: list(module)
   def get_converters([]), do: []
   def get_converters(modules) do
@@ -19,9 +20,18 @@ defmodule PrometheusExometer do
   end
 
   @doc """
-  Get metric data in Prometheus format
+  Get data from Exometer metrics in Prometheus text format.
 
   config = %{namespace: list(atom), converters: list(module)}
+
+  The config map provides options for the output.
+
+  It has two keys:
+
+  - namespace: a prefix which will be added to each metric, normally the app name
+  - converters: a list of modules which have callback functions to convert
+      internal Exometer names into external format
+
   """
   @spec scrape(map) :: iolist
   def scrape(config) do
@@ -47,6 +57,7 @@ defmodule PrometheusExometer do
     [results, format_scrape_duration(config, start_time), format_namespace_up(config)]
   end
 
+  @doc "Scrape with default config"
   @spec scrape() :: iolist
   def scrape, do: scrape(%{})
 
@@ -218,36 +229,43 @@ defmodule PrometheusExometer do
 
   ### tested
 
+  @doc false
   @spec format_names(name) :: list(binary)
   def format_names(names) when is_list(names) do
     names = for name <- names, do: to_string(name)
     Enum.intersperse(names, "_")
   end
 
+  @doc false
   @spec format_value(term) :: binary
   def format_value(value) when is_float(value), do: to_string(Float.round(value, 4))
   def format_value(value), do: to_string(value)
 
+  @doc false
   @spec format_help(list(atom), binary) :: iolist
   def format_help(names, description) when is_binary(description) do
     ["# HELP ", format_names(names), " ", description, "\n"]
   end
 
+  @doc false
   @spec format_type(list(atom), binary) :: iolist
   def format_type(names, type_name) when is_binary(type_name) do
     ["# TYPE ", format_names(names), " ", type_name, "\n"]
   end
 
+  @doc false
   @spec format_description(map | nil, :exometer.name) :: binary
   def format_description(prometheus_options, exometer_name)
   def format_description(%{description: description}, _) when is_binary(description), do: description
   def format_description(_prometheus_options, exometer_name), do: inspect(exometer_name)
 
+  @doc false
   @spec format_label(binary | atom | {atom, any}) :: binary | list(binary)
   def format_label(label) when is_binary(label), do: label
   def format_label(label) when is_atom(label), do: to_string(label)
   def format_label({key, value} = label) when is_tuple(label), do: [to_string(key), "=\"", to_string(value), "\""]
 
+  @doc false
   @spec format_labels(labels) :: list
   def format_labels([]), do: []
   def format_labels(labels) do
@@ -255,20 +273,24 @@ defmodule PrometheusExometer do
     Enum.intersperse(label_strings, ",")
   end
 
+  @doc false
   @spec format_metric(name, labels) :: list(binary)
   def format_metric(name, []), do: format_names(name)
   def format_metric(name, labels), do: [format_names(name), "{", format_labels(labels), "}"]
 
+  @doc false
   @spec format_data(name, Keyword.t, term) :: list(binary)
   def format_data(name, labels, value) do
     [format_metric(name, labels), " ", format_value(value), "\n"]
   end
 
+  @doc false
   @spec format_type_name(map | nil, atom) :: binary
   def format_type_name(prometheus_options, exometer_type)
   def format_type_name(%{type: type}, _exometer_type), do: format_type_name(type)
   def format_type_name(_, exometer_type),              do: format_type_name(exometer_type)
 
+  @doc false
   @spec format_type_name(:exometer.type) :: binary
   def format_type_name(exometer_type)
   def format_type_name(:prometheus_counter), do: "counter"
@@ -282,7 +304,8 @@ defmodule PrometheusExometer do
   def format_type_name(_), do: "untyped"
 
 
-  @doc "Format scrape duration metric"
+  # Format scrape duration metric
+  @doc false
   @spec format_scrape_duration(map, :erlang.timestamp) :: iolist
   def format_scrape_duration(config, start_time) do
     namespace = config[:namespace] || []
@@ -290,14 +313,16 @@ defmodule PrometheusExometer do
     format_data(namespace ++ [:scrape_duration_seconds], [], duration / 1)
   end
 
-  @doc "Format up metric"
+  # Format up metric
+  @doc false
   @spec format_namespace_up(map) :: iolist
   def format_namespace_up(%{namespace: namespace}) when is_list(namespace) do
     format_data(namespace ++ ["up"], [], 1)
   end
   def format_namespace_up(_), do: []
 
-  @doc "Format metric header"
+  # Format metric header
+  @doc false
   @spec format_header(name, Keyword.t, map, :exometer.name, :exometer.type) :: iolist
   def format_header(name, labels, prometheus_options, exometer_name, exometer_type)
   def format_header(name, [], prometheus_options, exometer_name, exometer_type) do
@@ -309,16 +334,19 @@ defmodule PrometheusExometer do
   def format_header(_, _, _, _, _), do: []
 
 
+  @doc false
   @spec convert_unit(map, term) :: term
   def convert_unit(prometheus_options, value)
   def convert_unit(%{unit: from, export_unit: to}, value), do: convert_unit(from, to, value)
   def convert_unit(_, value), do: value
 
+  @doc false
   @spec convert_unit(atom, atom, term) :: term
   def convert_unit(from, to, value)
   def convert_unit(:us, :seconds, value), do: value / 1_000_000
   def convert_unit(_, _, value), do: value
 
+  @doc false
   @spec suffix(map) :: list
   def suffix(prometheus_options)
   def suffix(%{suffix: suffix}) when is_list(suffix), do: suffix
@@ -330,6 +358,7 @@ defmodule PrometheusExometer do
   def split_name_labels(exometer_name, %{parent: parent}), do: {parent, strip_prefix(parent, exometer_name)}
   def split_name_labels(exometer_name, _options), do: {exometer_name, []}
 
+  @doc false
   @spec strip_prefix(list, list) :: list
   def strip_prefix([head | rest1], [head | rest2]), do: strip_prefix(rest1, rest2)
   def strip_prefix([], labels), do: labels

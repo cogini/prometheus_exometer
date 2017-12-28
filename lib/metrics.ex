@@ -1,18 +1,18 @@
 defmodule PrometheusExometer.Metrics do
   @moduledoc """
-  API to record metrics
+  API to record metrics.
 
-  This implements the [recommended public API for Prometheus client 
+  This implements the [recommended public API for Prometheus client
   libraries](https://prometheus.io/docs/instrumenting/writing_clientlibs/)
 
-  They underlying Exometer API is pretty straightforward, though, so it
-  is possible to just call the generic `update` API. 
+  They underlying Exometer API is very simple, though.
+  It is possible to just call the generic `update` API.
 
-  Differences with the Prometheus API recommendations: 
+  Differences with the Prometheus API recommendations:
 
   Erlang times are in microseconds internally, so that's what we store,
   and that's the default output unit instead of seconds.
-  
+
   """
 
   # TODO: check that value is > 0 for counter
@@ -21,12 +21,14 @@ defmodule PrometheusExometer.Metrics do
   @type value :: any
   @type error :: {:error, any}
 
-  @doc "Increment counter or gauge"
+
+  @doc "Increment metric by specified amount"
   @spec inc(name, labels, float) :: :ok
   def inc(name, labels, value) when is_list(labels) do
     update(name, labels, value)
   end
 
+  @doc "Increment metric by 1"
   @spec inc(name, labels) :: :ok
   def inc(name, labels) when is_list(labels), do: update(name, labels, 1)
 
@@ -36,33 +38,42 @@ defmodule PrometheusExometer.Metrics do
   @spec inc(name) :: :ok
   def inc(name), do: update(name, name, 1)
 
-  @doc "Increment gauge"
+
+  @doc "Decrement metric by specified value"
   @spec dec(name, labels, float) :: :ok
   def dec(name, labels, value), do: update(name, labels, value)
 
+  @doc "Decrement metric with labels by 1"
   @spec dec(name, labels) :: :ok
   def dec(name, labels) when is_list(labels), do: update(name, labels, -1)
 
+  @doc "Decrement metric without labels by specified value"
   @spec dec(name, float) :: :ok
   def dec(name, value), do: update(name, value)
 
   @spec dec(name) :: :ok
   def dec(name), do: update(name, -1)
 
-  @doc "Set gauge to value"
+
+  @doc "Set gauge with labels to specified value"
   @spec set(list, labels, float) :: :ok
   def set(name, labels, value) when is_list(labels), do: update(name, labels, value)
 
+  @doc "Set gauge without labels to specified value"
   @spec set(name, float) :: :ok
   def set(name, value), do: update(name, value)
 
-  @doc "Set gauge to the current unixtime in seconds"
+
+  @doc "Set metric with labels to the current unixtime in seconds"
   @spec set_to_current_time(name, labels) :: :ok
   def set_to_current_time(name, labels) when is_list(labels), do: update(name, labels, unixtime())
 
+  @doc "Set metric without labels to the current unixtime in seconds"
   @spec set_to_current_time(name) :: :ok
   def set_to_current_time(name), do: update(name, unixtime())
 
+
+  @doc "Set metric to the difference between the specified timestamp and the current time"
   @spec set_duration(name, :erlang.timestamp) :: :ok
   def set_duration(name, start_time) do
     end_time = :os.timestamp()
@@ -133,7 +144,6 @@ defmodule PrometheusExometer.Metrics do
   # to designate buckets.
 
   @doc "Generic Exometer public interface which handles labels"
-
   @spec update(name, labels, value) :: :ok | error
   def update(name, labels, value) do
     :exometer.update_or_create(combine_name_labels(name, labels), value)
