@@ -31,7 +31,7 @@ defmodule PrometheusExometer.Mixfile do
   defp deps do
     [
       # {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:exlager, github: "reachfh/exlager", branch: "metadata"},
+      # {:exlager, github: "khia/exlager"},
       {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
       # {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
