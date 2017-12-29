@@ -1,24 +1,11 @@
 defmodule PrometheusExometer do
   @moduledoc """
-  Interface functions to publish Exometer metrics in Prometheus format.
-
-  The primary interface is `scrape/1`.
+  Interface functions which publish Exometer metrics in Prometheus format.
 
   """
-
   alias PrometheusExometer.FormatText
 
   # require Lager
-
-  @doc "Get modules which have a prometheus_convert_name callback defined"
-  @spec get_converters(list(module)) :: list(module)
-  def get_converters([]), do: []
-  def get_converters(modules) do
-    Enum.filter(modules, fn(module) ->
-      exports = module.module_info(:exports)
-      Keyword.has_key?(exports, :prometheus_convert_name)
-    end)
-  end
 
   @doc """
   Format data from Exometer metrics in Prometheus text format.
@@ -27,10 +14,10 @@ defmodule PrometheusExometer do
 
   config = %{namespace: list(atom), converters: list(module)}
 
-  It has two keys:
+  Keys:
 
-  - namespace: a prefix which will be added to each metric, normally the app name
-  - converters: a list of modules which have callback functions to convert
+  - `namespace`: a prefix which will be added to each metric, normally the app name
+  - `converters`: a list of modules which have callback functions to convert
       internal Exometer names into external format
 
   """
@@ -89,6 +76,20 @@ defmodule PrometheusExometer do
   defp collect_children({_, _, _}, acc) do
     # Skip disabled entries
     acc
+  end
+
+  @doc "Filter list of modules to ones with a `prometheus_convert_name` callback"
+  @spec get_converters(list(module)) :: list(module)
+  def get_converters([]), do: []
+  def get_converters(modules) do
+    Enum.filter(modules, &exports_prometheus_convert_name?/1)
+  end
+
+  @doc "Return true if module exports an `prometheus_convert_name` callback function"
+  @spec exports_prometheus_convert_name?(module) :: boolean
+  def exports_prometheus_convert_name?(module) do
+    exports = module.module_info(:exports)
+    Keyword.has_key?(exports, :prometheus_convert_name)
   end
 
 end

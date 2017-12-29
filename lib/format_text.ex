@@ -117,41 +117,7 @@ defmodule PrometheusExometer.FormatText do
     []
   end
 
-
-  # Add namespace and standard suffixes according to Prometheus conventions
-  # Convert other metrics into standard format
-  @spec convert_name(list(atom), Keyword.t, map) :: {list, list}
-  defp convert_name(name, info, %{converters: converters} = config) do
-    convert_name(name, info, config, converters)
-  end
-  defp convert_name(name, info, config) do
-    convert_name(name, info, config, [])
-  end
-
-  # Default if no converter matches
-  defp convert_name(name, info, config, []) do
-    options = info[:options]
-    prometheus_options = options[:prometheus] || %{}
-    namespace =config[:namespace] || []
-    # Lager.debug("convert_name default #{inspect name} #{inspect info}")
-    {namespace ++ name ++ suffix(prometheus_options), []}
-  end
-  defp convert_name(name, info, config, [module | rest]) do
-    options = info[:options]
-    prometheus_options = options[:prometheus] || %{}
-    namespace =config[:namespace] || []
-    # Lager.debug("module #{module} name #{inspect name} options #{inspect options}")
-    case module.prometheus_convert_name(name, options) do
-      {new_name, labels} ->
-        # Lager.debug("convert_name module #{module} #{inspect name} #{inspect new_name} #{inspect labels}")
-        name = namespace ++ new_name ++ suffix(prometheus_options)
-        {name, labels}
-      _ ->
-        convert_name(name, info, config, rest)
-    end
-  end
-
-  # These are internal functions, exported from the module for tests
+  # These functions have tests
 
   @spec format_names(name) :: list(binary)
   def format_names(names) when is_list(names) do
