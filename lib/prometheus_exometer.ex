@@ -1,5 +1,11 @@
 defmodule PrometheusExometer do
-  @moduledoc "Convert Exometer metrics to Prometheus format"
+  @moduledoc """
+  Interface functions to publish Exometer metrics in Prometheus format.
+
+  The primary interface is `scrape/1`. 
+
+
+  """
 
   @typedoc "Name of a metric"
   @type name :: :exometer.name
@@ -20,11 +26,11 @@ defmodule PrometheusExometer do
   end
 
   @doc """
-  Get data from Exometer metrics in Prometheus text format.
+  Format data from Exometer metrics in Prometheus text format.
+
+  It takes a map with configuration options. 
 
   config = %{namespace: list(atom), converters: list(module)}
-
-  The config map provides options for the output.
 
   It has two keys:
 
@@ -227,7 +233,7 @@ defmodule PrometheusExometer do
     end
   end
 
-  ### tested
+  # These are internal functions, exported from the module for tests
 
   @doc false
   @spec format_names(name) :: list(binary)
@@ -257,7 +263,7 @@ defmodule PrometheusExometer do
   @spec format_description(map | nil, :exometer.name) :: binary
   def format_description(prometheus_options, exometer_name)
   def format_description(%{description: description}, _) when is_binary(description), do: description
-  def format_description(_prometheus_options, exometer_name), do: inspect(exometer_name)
+  def format_description(_, exometer_name), do: inspect(exometer_name)
 
   @doc false
   @spec format_label(binary | atom | {atom, any}) :: binary | list(binary)
@@ -285,12 +291,14 @@ defmodule PrometheusExometer do
   end
 
   @doc false
+  # Convert internal type to Prometheus type name
   @spec format_type_name(map | nil, atom) :: binary
   def format_type_name(prometheus_options, exometer_type)
   def format_type_name(%{type: type}, _exometer_type), do: format_type_name(type)
   def format_type_name(_, exometer_type),              do: format_type_name(exometer_type)
 
   @doc false
+  # Convert Exometer type to Prometheus type name
   @spec format_type_name(:exometer.type) :: binary
   def format_type_name(exometer_type)
   def format_type_name(:prometheus_counter), do: "counter"
@@ -302,7 +310,6 @@ defmodule PrometheusExometer do
   def format_type_name(:spiral), do: "gauge"
   def format_type_name(:histogram), do: "summary"
   def format_type_name(_), do: "untyped"
-
 
   # Format scrape duration metric
   @doc false
@@ -321,8 +328,8 @@ defmodule PrometheusExometer do
   end
   def format_namespace_up(_), do: []
 
-  # Format metric header
   @doc false
+  # Format metric header
   @spec format_header(name, Keyword.t, map, :exometer.name, :exometer.type) :: iolist
   def format_header(name, labels, prometheus_options, exometer_name, exometer_type)
   def format_header(name, [], prometheus_options, exometer_name, exometer_type) do
@@ -353,8 +360,10 @@ defmodule PrometheusExometer do
   def suffix(%{suffix: suffix}), do: [suffix]
   def suffix(_), do: []
 
-  @doc "Separate name and labels from Exometer name"
+  # Separate name and labels from Exometer name.
+  @doc false
   @spec split_name_labels(:exometer.name, map) :: {:exometer.name, list}
+  def split_name_labels(exometer_name, prometheus_options)
   def split_name_labels(exometer_name, %{parent: parent}), do: {parent, strip_prefix(parent, exometer_name)}
   def split_name_labels(exometer_name, _options), do: {exometer_name, []}
 
