@@ -30,17 +30,17 @@ defmodule PrometheusExometer.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       # {:exlager, github: "khia/exlager"},
       {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
       {:ex_doc, "~> 0.10", only: :dev}
-      # {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
+      # {:mix_test_watch, "~> 0.5", only: [:dev, :test], runtime: false},
     ]
   end
 
   defp description() do
-    "This library adds support to Exometer to generate Prometheus metrics output. It reads the Exometer metrics you define and generates a report in text format."
+    "This reads Exometer metrics and generates a report in Prometheus text output."
   end
 
   defp package() do
