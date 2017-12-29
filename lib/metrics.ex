@@ -66,7 +66,6 @@ defmodule PrometheusExometer.Metrics do
       :ok
 
   """
-  @doc "Decrement counter or gauge metric."
   @spec dec(name, labels, float) :: :ok
   def dec(name, labels, value), do: update(name, labels, value)
 
