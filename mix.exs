@@ -32,8 +32,12 @@ defmodule PrometheusExometer.Mixfile do
     [
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
       # {:exlager, github: "khia/exlager"},
-      {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
-      {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
+      # {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
+      {:exometer_core, "~> 1.5"},
+      # {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
+      # https://github.com/Feuerlabs/exometer_core/pull/101
+      # https://github.com/uwiger/setup/issues/44
+      {:setup, "~> 2.0", override: true},
       {:ex_doc, "~> 0.10", only: :dev}
       # {:mix_test_watch, "~> 0.5", only: [:dev, :test], runtime: false},
     ]
@@ -45,7 +49,6 @@ defmodule PrometheusExometer.Mixfile do
 
   defp package() do
     [
-      files: ["lib", "src", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
       maintainers: ["Jake Morrison"],
       licenses: ["Mozilla Public License 2.0"],
       links: %{"GitHub" => "https://github.com/cogini/prometheus_exometer"}
