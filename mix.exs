@@ -34,10 +34,10 @@ defmodule PrometheusExometer.Mixfile do
       # {:exlager, github: "khia/exlager"},
       # {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:exometer_core, "~> 1.5"},
-      # {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
+      {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
       # https://github.com/Feuerlabs/exometer_core/pull/101
       # https://github.com/uwiger/setup/issues/44
-      {:setup, "~> 2.0", override: true},
+      # {:setup, "~> 2.0", override: true},
       {:ex_doc, "~> 0.10", only: :dev}
       # {:mix_test_watch, "~> 0.5", only: [:dev, :test], runtime: false},
     ]

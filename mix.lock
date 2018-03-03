@@ -9,4 +9,4 @@
   "lager": {:hex, :lager, "3.5.2", "614a8c8f67bf99b69eb264ea22121ad25511c055aaec09b086773d5108c6767f", [:rebar3], [{:goldrush, "0.1.9", [hex: :goldrush, repo: "hexpm", optional: false]}], "hexpm"},
   "meck": {:git, "https://github.com/eproxus/meck", "70d6a33ce7407029dc59e22a5b3c1c61c1348b23", [tag: "0.8.4"]},
   "parse_trans": {:hex, :parse_trans, "3.0.0", "9e96b1c9c3a0df54e7b76f8f685d38bfa1eb21b31e042b1d1a5a70258e4db1e3", [:rebar3], [], "hexpm"},
-  "setup": {:hex, :setup, "2.0.2", "1203f4cda11306c2e34434244576ded0a7bbfb0908d9a572356c809bd0cdf085", [:rebar3], [], "hexpm"}}
+  "setup": {:git, "https://github.com/uwiger/setup.git", "eda3352e7555b9faf42b5242d95fc386bccbe123", []}}
