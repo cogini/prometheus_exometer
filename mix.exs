@@ -40,7 +40,7 @@ defmodule PrometheusExometer.Mixfile do
   end
 
   defp description() do
-    "This reads Exometer metrics and generates a report in Prometheus text output."
+    "Reads Exometer metrics and generates a report in Prometheus text output format."
   end
 
   defp package() do
