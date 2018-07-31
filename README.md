@@ -24,14 +24,14 @@ don't create labels based on user input.
 An example of creating metrics is to record atom codes for handler,
 action and detail on responses. The handler indicates the module which created
 the response. The action is a standard set like "success", "redirect",
-"reject", "error" e.g. HTTP 200/300/400/500. Detail depends on the module,
+"reject", "error", similar to HTTP 200/300/400/500 responses. Detail depends on the module,
 e.g. if we reject DDOS traffic based on the HTTP user agent, it might be
 "agent".
 
 The result might look something like this for an API service:
 
-    # HELP foo_responses Total number of responses
-    # TYPE foo_responses counter
+    # HELP api_responses Total number of responses
+    # TYPE api_responses counter
     api_responses{handler="rate_limit",action="reject",detail="ip"} 480
     api_responses{handler="validate",action="invalid",detail="user"} 7
     api_responses{handler="block_media",action="reject",detail="media"} 100
@@ -99,7 +99,7 @@ While it's possible to define Exometer metrics programmatically in your code,
 due to the loose relationship between independent Erlang applications, it's
 easy to get into race conditions on startup. Defining metrics is in
 `predefined` section of the `exometer_core` config generally works well, though
-they syntax is a bit messy.
+the syntax is a bit messy.
 
 In order to make things more resilent, the metrics recording functions in this
 library call `:exometer.update_or_create/2`. The effect is that the metric will
