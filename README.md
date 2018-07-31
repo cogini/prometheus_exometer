@@ -263,3 +263,61 @@ api_cowboy_http_responses{code="200 OK"} 49
 api_cowboy_http_responses{code="302 Found"} 48
 api_cowboy_http_responses{code="404 Not Found"} 10
 ```
+
+# Sampling metrics
+
+`PrometheusExometer.SampleMetrics` is a GenServer which periodically updates metrics by calling functions.
+
+Put this in `config/config.exs`:
+
+```elixir
+config :foo,
+  sample_metrics: [
+    sample_interval: 60_000,
+    metrics: [
+      {[:erlang, :memory, :total], {:erlang, :memory, [:total]}},
+      {[:erlang, :memory, :processes], {:erlang, :memory, [:processes]}},
+      {[:erlang, :memory, :processes_used], {:erlang, :memory, [:processes_used]}},
+      {[:erlang, :memory, :system], {:erlang, :memory, [:system]}},
+      {[:erlang, :memory, :atom], {:erlang, :memory, [:atom]}},
+      {[:erlang, :memory, :atom_used], {:erlang, :memory, [:atom_used]}},
+      {[:erlang, :memory, :binary], {:erlang, :memory, [:binary]}},
+      {[:erlang, :memory, :ets], {:erlang, :memory, [:ets]}},
+      {[:erlang, :system_info, :process_count], {:erlang, :system_info, [:process_count]}},
+      {[:erlang, :system_info, :port_count], {:erlang, :system_info, [:port_count]}},
+      {[:erlang, :statistics, :run_queue], {:erlang, :statistics, [:run_queue]}},
+    ]
+  ]
+
+config :foo,
+  exometer_predefined: [
+      {[:erlang, :memory, :total], :gauge, []},
+      {[:erlang, :memory, :processes], :gauge, []},
+      {[:erlang, :memory, :processes_used], :gauge, []},
+      {[:erlang, :memory, :system], :gauge, []},
+      {[:erlang, :memory, :atom], :gauge, []},
+      {[:erlang, :memory, :atom_used], :gauge, []},
+      {[:erlang, :memory, :binary], :gauge, []},
+      {[:erlang, :memory, :ets], :gauge, []},
+      {[:erlang, :system_info, :process_count], :gauge, []},
+      {[:erlang, :system_info, :port_count], :gauge, []},
+      {[:erlang, :statistics, :run_queue], :gauge, []},
+  ]
+```
+
+Configure and start it in your application supervisor:
+
+```elixir
+def start(_type, _args) do
+  import Supervisor.Spec
+
+  sample_metrics_opts = Application.get_env(:foo, :sample_metrics, [])
+
+  children = [
+    {PrometheusExometer.SampleMetrics, [sample_metrics_opts]},
+  ]
+
+  opts = [strategy: :one_for_one, name: Foo.Supervisor]
+  Supervisor.start_link(children, opts)
+end
+```
