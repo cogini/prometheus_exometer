@@ -15,18 +15,18 @@ which is more natural for Prometheus, e.g..
     api_http_requests_total{method="POST", handler="/messages"}
 
 It does this by converting the labels into keyword=value atoms which it appends to the
-Exometer name, which is normally a list of atoms. It is, in general, bad practice to
-create a lot of atoms, as the Erlang VM has a relatively small fixed limit. Specifically,
-don't create labels based on user input.
+Exometer name, which is normally a list of atoms. The Erlang VM has a relatively small fixed
+limit on the number of atoms. Because of this, you should not create labels in response to
+external input, you should limit the atoms to a relatively small set that you control.
 
 ## Example
 
 An example of creating metrics is to record atom codes for handler,
-action and detail on responses. The handler indicates the module which created
+action, and detail on responses. The handler indicates the module which created
 the response. The action is a standard set like "success", "redirect",
 "reject", "error", similar to HTTP 200/300/400/500 responses. Detail depends on the module,
 e.g. if we reject DDOS traffic based on the HTTP user agent, it might be
-"agent".
+"agent.
 
 The result might look something like this for an API service:
 
@@ -39,13 +39,13 @@ The result might look something like this for an API service:
     api_responses{handler="route",action="redirect",detail="legacy"} 10
     api_responses{handler="api",action="success",detail="ok"} 1000
 
-## Prometheus histograms vs Exometer historgrams
+## Prometheus histograms vs Exometer histograms
 
 There is a fundamental difference between Exometer histograms and Exometer histograms.
 Exometer histogram buckets are dynamic, so when you get e.g. the 95% bucket, it depends
 on the actual samples. Prometheus histograms have a static range, and are perhaps best
 thought of as having multiple counters, one for each bucket. Because of this, we need
-to pre-define the bucket ranges that we will use.
+to predefine the bucket ranges that we will use.
 
 ## Installation
 
@@ -101,9 +101,9 @@ easy to get into race conditions on startup. Defining metrics is in
 `predefined` section of the `exometer_core` config generally works well, though
 the syntax is a bit messy.
 
-In order to make things more resilent, the metrics recording functions in this
+In order to make things more resilient, the metrics recording functions in this
 library call `:exometer.update_or_create/2`. The effect is that the metric will
-be created the first time it is used based on the the settings in the
+be created the first time it is used based on the settings in the
 `defaults` section of the `exometer_core` config.
 
 If you have specific settings that you want, e.g. histogram buckets, then you
