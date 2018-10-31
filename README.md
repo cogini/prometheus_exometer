@@ -199,9 +199,11 @@ defmodule Foo.Middleware do
 
   # Called at end of request
   def cowboy_response_hook(code, headers, body, req) do
+    # code may be an integer or a string like "200 OK"
+    code = get_code(code)
+
     :exometer.update(@metric_http_responses, {[code: code], 1})
 
-    # TODO: the code is actually a string, e.g. "200 OK", so this doesn't really work
     if code >= 500 and code < 600 do
       :exometer.update(@metric_http_errors, 1)
     end
@@ -219,6 +221,14 @@ defmodule Foo.Middleware do
     headers2 = :lists.keyreplace("server", 1, headers, {"server", "nginx"})
     {:ok, req} = :cowboy_req.reply(code, headers2, body, req)
     req
+  end
+
+  @spec get_code(non_neg_integer | binary) :: non_neg_integer
+  defp get_code(code) when is_integer(code), do: code
+  defp get_code(code) when is_binary(code) do
+    # code may be string like "200 OK"
+    code = hd(String.split(code))
+    String.to_integer(code)
   end
 
 end
