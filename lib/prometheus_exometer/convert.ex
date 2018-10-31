@@ -48,6 +48,7 @@ defmodule PrometheusExometer.Convert do
   @spec convert_unit(atom, atom, term) :: term
   def convert_unit(from, to, value)
   def convert_unit(:us, :seconds, value), do: value / 1_000_000
+  def convert_unit(:ms, :seconds, value), do: value / 1_000
   def convert_unit(_, _, value), do: value
 
   @spec suffix(map) :: list
