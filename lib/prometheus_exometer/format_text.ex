@@ -51,7 +51,7 @@ defmodule PrometheusExometer.FormatText do
 
     [
       if Map.get(prometheus_options, :export_buckets, false) do
-        for {k, v} <- data_points, not k in [:ms_since_reset, :sum, :count] do
+        for {k, v} <- data_points, k not in [:ms_since_reset, :sum, :count] do
           format_data(name, labels ++ [le: k], v)
         end
       else
