@@ -12,10 +12,14 @@ defmodule PrometheusExometer.Mixfile do
       package: package(),
       source_url: "https://github.com/cogini/prometheus_exometer",
       dialyzer: [
-        plt_add_deps: true,
+        plt_add_apps: [:mix, :eex]
+        # plt_add_deps: true,
+        # flags: ["-Werror_handling", "-Wrace_conditions"],
         # flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs],
+        # ignore_warnings: "dialyzer.ignore-warnings"
       ],
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -38,20 +42,28 @@ defmodule PrometheusExometer.Mixfile do
       # https://github.com/Feuerlabs/exometer_core/pull/101
       # https://github.com/uwiger/setup/issues/44
       # {:setup, "~> 2.0", override: true},
-      {:ex_doc, "~> 0.10", only: :dev}
+      {:ex_doc, "~> 0.19.2", only: :dev, runtime: false},
       # {:mix_test_watch, "~> 0.5", only: [:dev, :test], runtime: false},
     ]
   end
 
-  defp description() do
+  defp description do
     "Reads Exometer metrics and generates a report in Prometheus text output format."
   end
 
-  defp package() do
+  defp package do
     [
       maintainers: ["Jake Morrison"],
       licenses: ["Mozilla Public License 2.0"],
       links: %{"GitHub" => "https://github.com/cogini/prometheus_exometer"}
     ]
   end
+
+  defp docs do
+    [
+      source_url: "https://github.com/cogini/prometheus_exometer",
+      extras: ["README.md"]
+    ]
+  end
+
 end
