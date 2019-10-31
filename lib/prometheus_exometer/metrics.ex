@@ -46,10 +46,8 @@ defmodule PrometheusExometer.Metrics do
     update(name, labels, value)
   end
 
-  @spec inc(name, labels) :: :ok
+  @spec inc(name, labels | value) :: :ok
   def inc(name, labels) when is_list(labels), do: update(name, labels, 1)
-
-  @spec inc(name, value) :: :ok
   def inc(name, value), do: update(name, name, value)
 
   @spec inc(name) :: :ok
@@ -66,13 +64,11 @@ defmodule PrometheusExometer.Metrics do
       :ok
 
   """
-  @spec dec(name, labels, float) :: :ok
+  @spec dec(name, labels, value) :: :ok
   def dec(name, labels, value), do: update(name, labels, value)
 
-  @spec dec(name, labels) :: :ok
+  @spec dec(name, labels | value) :: :ok
   def dec(name, labels) when is_list(labels), do: update(name, labels, -1)
-
-  @spec dec(name, float) :: :ok
   def dec(name, value), do: update(name, value)
 
   @spec dec(name) :: :ok
