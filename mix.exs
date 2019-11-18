@@ -1,18 +1,20 @@
 defmodule PrometheusExometer.Mixfile do
   use Mix.Project
 
+  @github "https://github.com/cogini/prometheus_exometer"
+
   def project do
     [
       app: :prometheus_exometer,
       version: "0.1.0",
-      elixir: ">= 1.5.0",
-      elixirc_paths: elixirc_paths(Mix.env()),
+      elixir: "~> 1.8",
+      elixirc_paths: elixirc_paths(Mix.env),
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       description: description(),
       package: package(),
-      source_url: "https://github.com/cogini/prometheus_exometer",
-      homepage_url: "https://github.com/cogini/prometheus_exometer",
+      source_url: @github,
+      homepage_url: @github,
       dialyzer: [
         plt_add_apps: [:mix, :eex]
         # plt_add_deps: true,
@@ -60,20 +62,20 @@ defmodule PrometheusExometer.Mixfile do
   end
 
   defp description do
-    "Reads Exometer metrics and generates a report in Prometheus text output format."
+    "Read Exometer metrics and generate Prometheus text output."
   end
 
   defp package do
     [
       maintainers: ["Jake Morrison"],
       licenses: ["Mozilla Public License 2.0"],
-      links: %{"GitHub" => "https://github.com/cogini/prometheus_exometer"}
+      links: %{"GitHub" => @github}
     ]
   end
 
   defp docs do
     [
-      source_url: "https://github.com/cogini/prometheus_exometer",
+      source_url: @github,
       extras: ["README.md"]
     ]
   end
