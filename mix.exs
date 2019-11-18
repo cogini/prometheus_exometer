@@ -31,7 +31,7 @@ defmodule PrometheusExometer.Mixfile do
   def application do
     [
       # extra_applications: [:logger] ++ extra_applications(Mix.env())
-      # extra_applications: [:lager, :logger]
+      # extra_applications: [:logger]
     ]
   end
 
@@ -47,7 +47,6 @@ defmodule PrometheusExometer.Mixfile do
     [
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
-      # {:exlager, github: "khia/exlager"},
       # {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:exometer_core, "~> 1.5"},
       {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24

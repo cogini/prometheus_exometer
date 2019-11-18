@@ -31,13 +31,13 @@ behaviour()->
     probe.
 
 probe_init(Name, _Type, Options) ->
-    % lager:debug("Options: ~p ~p", [Name, Options]),
+    % logger:debug("Options: ~p ~p", [Name, Options]),
     St = process_options(#st{name = Name,
                           internal_name = Name ++ [internal],
                           internal_type = histogram,
                           sub_type = prometheus_histogram
                          }, Options),
-    % lager:debug("St: ~p ~p", [Name, St]),
+    % logger:debug("St: ~p ~p", [Name, St]),
 
     PrometheusOptions0 = proplists:get_value(prometheus, St#st.options, #{}),
     PrometheusOptions = maps:merge(PrometheusOptions0, #{parent => Name}),
@@ -45,7 +45,7 @@ probe_init(Name, _Type, Options) ->
     ChildOptions0 = proplists:delete(module, St#st.options),
     ChildOptions = proplists:delete(prometheus, ChildOptions0),
 
-    % lager:debug("ChildOptions: ~p ~p", [Name, ChildOptions]),
+    % logger:debug("ChildOptions: ~p ~p", [Name, ChildOptions]),
     InternalOptions = ChildOptions ++ [{prometheus, maps:merge(PrometheusOptions, #{internal => true})}],
     exometer:ensure(St#st.internal_name, St#st.internal_type, InternalOptions),
     lists:foreach(fun({BucketName, _Bucket}) ->
@@ -70,7 +70,7 @@ probe_get_value(DataPoints, St) ->
 
 probe_get_datapoints(St) ->
     Buckets = [Name || {Name, _Bucket} <- St#st.buckets],
-    % lager:debug("buckets: ~p", [Buckets]),
+    % logger:debug("buckets: ~p", [Buckets]),
     {ok, [sum, count] ++ Buckets}.
 
 probe_setopts(_Entry, _Options, _St)  ->
