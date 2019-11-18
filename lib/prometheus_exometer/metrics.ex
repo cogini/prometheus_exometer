@@ -74,7 +74,6 @@ defmodule PrometheusExometer.Metrics do
   @spec dec(name) :: :ok
   def dec(name), do: update(name, -1)
 
-
   @doc """
   Set gauge to specified value.
 
@@ -98,7 +97,6 @@ defmodule PrometheusExometer.Metrics do
 
   @spec set_to_current_time(name) :: :ok
   def set_to_current_time(name), do: update(name, unixtime())
-
 
   @doc """
   Set metric to the difference between the specified timestamp and the current time in ms.
@@ -125,7 +123,6 @@ defmodule PrometheusExometer.Metrics do
     delta_time = :timer.now_diff(end_time, start_time)
     set(name, labels, delta_time / 1)
   end
-
 
   # Prometheus standard API:
   # TODO:
@@ -154,7 +151,6 @@ defmodule PrometheusExometer.Metrics do
 
   @spec observe(name, value) :: :ok | error
   def observe(name, value), do: update(name, value)
-
 
   @doc "Observe time difference in ms between starting time and current time."
   @spec observe_duration(name, :erlang.timestamp) :: :ok | error
@@ -228,7 +224,6 @@ defmodule PrometheusExometer.Metrics do
       String.to_atom("#{key}=\"#{value}\"")
     end
   end
-
 
   @doc "Record duration in ms of a function call, like Erlang :timer.tc/3"
   @spec tc(name, module, atom, list) :: any
