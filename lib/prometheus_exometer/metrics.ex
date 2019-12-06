@@ -137,7 +137,10 @@ defmodule PrometheusExometer.Metrics do
   # Histogram and Summary
 
   @doc "Observe current value for histogram or summary."
-  @spec observe(name, labels, float) :: :ok | error
+  @spec observe(name, labels, float | integer) :: :ok | error
+  def observe(name, labels, value) when is_integer(value) do
+    observe(name, labels, value / 1)
+  end
   def observe(name, labels, value) when is_list(labels) do
     # Prometheus standard API:
     # TODO: don't allow label of "le" or "quantile"
