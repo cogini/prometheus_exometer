@@ -48,10 +48,10 @@ defmodule PrometheusExometer.Metrics do
 
   @spec inc(name, labels | value) :: :ok
   def inc(name, labels) when is_list(labels), do: update(name, labels, 1)
-  def inc(name, value), do: update(name, name, value)
+  def inc(name, value), do: update(name, [], value)
 
   @spec inc(name) :: :ok
-  def inc(name), do: update(name, name, 1)
+  def inc(name), do: update(name, [], 1)
 
   @doc """
   Decrement counter or gauge metric.
