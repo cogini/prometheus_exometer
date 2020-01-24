@@ -1,4 +1,4 @@
-defmodule PrometheusExometer.Mixfile do
+defmodule PrometheusExometer.MixProject do
   use Mix.Project
 
   @github "https://github.com/cogini/prometheus_exometer"
@@ -8,22 +8,22 @@ defmodule PrometheusExometer.Mixfile do
       app: :prometheus_exometer,
       version: "0.2.0",
       elixir: "~> 1.8",
-      elixirc_paths: elixirc_paths(Mix.env),
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       source_url: @github,
       homepage_url: @github,
+      docs: docs(),
       dialyzer: [
-        plt_add_apps: [:mix, :eex]
+        plt_add_apps: [:mix, :eex],
         # plt_add_deps: true,
         # flags: ["-Werror_handling", "-Wrace_conditions"],
         # flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs],
         # ignore_warnings: "dialyzer.ignore-warnings"
       ],
       deps: deps(),
-      docs: docs(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
     ]
@@ -76,8 +76,9 @@ defmodule PrometheusExometer.Mixfile do
   defp docs do
     [
       source_url: @github,
-      extras: ["README.md"]
+      extras: ["README.md", "CHANGELOG.md"],
+      # api_reference: false,
+      source_url_pattern: "#{@github}/blob/master/%{path}#L%{line}",
     ]
   end
-
 end
