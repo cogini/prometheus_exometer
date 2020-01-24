@@ -187,14 +187,29 @@ defmodule PrometheusExometer.Metrics do
   @doc "Update Exometer metric with labels"
   @spec update(name, labels, value) :: :ok | error
   def update(name, labels, value) do
-    :exometer.update_or_create(combine_name_labels(name, labels), value)
+    try do
+      :exometer.update_or_create(combine_name_labels(name, labels), value)
+    catch
+      :error, :badarg ->
+        {:error, :badarg}
+    end
   end
   @spec update(name, value) :: :ok | error
   def update(name, {labels, value} = tuple_value) when is_tuple(tuple_value) do
-    :exometer.update_or_create(combine_name_labels(name, labels), value)
+    try do
+      :exometer.update_or_create(combine_name_labels(name, labels), value)
+    catch
+      :error, :badarg ->
+        {:error, :badarg}
+    end
   end
   def update(name, value) do
-    :exometer.update_or_create(name, value)
+    try do
+      :exometer.update_or_create(name, value)
+    catch
+      :error, :badarg ->
+        {:error, :badarg}
+    end
   end
 
   @doc "Get Exometer metric value"
