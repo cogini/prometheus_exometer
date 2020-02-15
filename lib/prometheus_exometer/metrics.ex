@@ -21,8 +21,8 @@ defmodule PrometheusExometer.Metrics do
   that's the default output unit instead of seconds.
   """
 
-  @type name :: :exometer.name
-  @type labels :: Keyword.t
+  @type name :: :exometer.name()
+  @type labels :: Keyword.t()
   @type value :: any
   @type error :: {:error, any}
 
@@ -110,14 +110,14 @@ defmodule PrometheusExometer.Metrics do
       PrometheusExometer.Metrics.set_duration([:duration], start_time)
 
   """
-  @spec set_duration(name, :erlang.timestamp) :: :ok
+  @spec set_duration(name, :erlang.timestamp()) :: :ok
   def set_duration(name, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
     set(name, delta_time / 1)
   end
 
-  @spec set_duration(name, labels, :erlang.timestamp) :: :ok
+  @spec set_duration(name, labels, :erlang.timestamp()) :: :ok
   def set_duration(name, labels, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
@@ -141,6 +141,7 @@ defmodule PrometheusExometer.Metrics do
   def observe(name, labels, value) when is_integer(value) do
     observe(name, labels, value / 1)
   end
+
   def observe(name, labels, value) when is_list(labels) do
     # Prometheus standard API:
     # TODO: don't allow label of "le" or "quantile"
@@ -156,14 +157,14 @@ defmodule PrometheusExometer.Metrics do
   def observe(name, value), do: update(name, value)
 
   @doc "Observe time difference in ms between starting time and current time."
-  @spec observe_duration(name, :erlang.timestamp) :: :ok | error
+  @spec observe_duration(name, :erlang.timestamp()) :: :ok | error
   def observe_duration(name, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
     observe(name, delta_time / 1)
   end
 
-  @spec observe_duration(name, labels, :erlang.timestamp) :: :ok | error
+  @spec observe_duration(name, labels, :erlang.timestamp()) :: :ok | error
   def observe_duration(name, labels, start_time) do
     end_time = :os.timestamp()
     delta_time = :timer.now_diff(end_time, start_time)
@@ -194,6 +195,7 @@ defmodule PrometheusExometer.Metrics do
         {:error, :badarg}
     end
   end
+
   @spec update(name, value) :: :ok | error
   def update(name, {labels, value} = tuple_value) when is_tuple(tuple_value) do
     try do
@@ -203,6 +205,7 @@ defmodule PrometheusExometer.Metrics do
         {:error, :badarg}
     end
   end
+
   def update(name, value) do
     try do
       :exometer.update_or_create(name, value)
@@ -238,9 +241,10 @@ defmodule PrometheusExometer.Metrics do
   def combine_name_labels(name, labels) do
     # It's dangerous in general to convert to atoms,
     # but we have a small set which we control
-    name ++ for {key, value} <- labels do
-      String.to_atom("#{key}=\"#{value}\"")
-    end
+    name ++
+      for {key, value} <- labels do
+        String.to_atom("#{key}=\"#{value}\"")
+      end
   end
 
   @doc "Record duration in ms of a function call, like Erlang :timer.tc/3"
@@ -261,7 +265,6 @@ defmodule PrometheusExometer.Metrics do
   # Utility
   defp unixtime do
     {mega, secs, _} = :os.timestamp()
-    (mega * 1_000_000) + secs
+    mega * 1_000_000 + secs
   end
-
 end

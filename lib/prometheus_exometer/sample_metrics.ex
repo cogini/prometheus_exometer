@@ -16,19 +16,23 @@ defmodule PrometheusExometer.SampleMetrics do
     state = %{
       metrics: args[:metrics] || []
     }
+
     {:ok, state}
   end
 
   @impl true
   def handle_info(:sample_metrics, state) do
-    Enum.each(state.metrics,
-              fn
-                {metric, {m, f, a}} ->
-                  PrometheusExometer.Metrics.observe(metric, apply(m, f, a))
-                {metric, labels, {m, f, a}} ->
-                  PrometheusExometer.Metrics.observe(metric, labels, apply(m, f, a))
-              end)
+    Enum.each(
+      state.metrics,
+      fn
+        {metric, {m, f, a}} ->
+          PrometheusExometer.Metrics.observe(metric, apply(m, f, a))
+
+        {metric, labels, {m, f, a}} ->
+          PrometheusExometer.Metrics.observe(metric, labels, apply(m, f, a))
+      end
+    )
+
     {:noreply, state}
   end
-
 end

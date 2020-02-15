@@ -7,10 +7,11 @@ defmodule PrometheusExometer.Convert do
 
   # Add namespace and standard suffixes according to Prometheus conventions
   # Convert other metrics into standard format
-  @spec convert_name(list(atom), Keyword.t, map) :: {list, list}
+  @spec convert_name(list(atom), Keyword.t(), map) :: {list, list}
   def convert_name(name, info, %{converters: converters} = config) do
     convert_name(name, info, config, converters)
   end
+
   def convert_name(name, info, config) do
     convert_name(name, info, config, [])
   end
@@ -23,6 +24,7 @@ defmodule PrometheusExometer.Convert do
     # Lager.debug("convert_name default #{inspect name} #{inspect info}")
     {namespace ++ name ++ suffix(prometheus_options), []}
   end
+
   def convert_name(name, info, config, [module | rest]) do
     options = info[:options]
     prometheus_options = options[:prometheus] || %{}
@@ -33,6 +35,7 @@ defmodule PrometheusExometer.Convert do
         # Lager.debug("convert_name module #{module} #{inspect name} #{inspect new_name} #{inspect labels}")
         name = namespace ++ new_name ++ suffix(prometheus_options)
         {name, labels}
+
       _ ->
         convert_name(name, info, config, rest)
     end
@@ -58,13 +61,15 @@ defmodule PrometheusExometer.Convert do
   def suffix(_), do: []
 
   # Separate name and labels from Exometer name.
-  @spec split_name_labels(:exometer.name, map) :: {:exometer.name, list}
+  @spec split_name_labels(:exometer.name(), map) :: {:exometer.name(), list}
   def split_name_labels(exometer_name, prometheus_options)
-  def split_name_labels(exometer_name, %{parent: parent}), do: {parent, strip_prefix(parent, exometer_name)}
+
+  def split_name_labels(exometer_name, %{parent: parent}),
+    do: {parent, strip_prefix(parent, exometer_name)}
+
   def split_name_labels(exometer_name, _options), do: {exometer_name, []}
 
   @spec strip_prefix(list, list) :: list
   def strip_prefix([head | rest1], [head | rest2]), do: strip_prefix(rest1, rest2)
   def strip_prefix([], labels), do: labels
-
 end

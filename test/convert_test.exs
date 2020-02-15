@@ -1,5 +1,6 @@
 defmodule ConvertTest do
   use ExUnit.Case
+
   # doctest PrometheusExometer
 
   # test "greets the world" do
@@ -32,5 +33,4 @@ defmodule ConvertTest do
     assert split_name_labels([:foo, :bar], %{parent: [:foo]}) == {[:foo], [:bar]}
     assert split_name_labels([:foo, :bar], %{}) == {[:foo, :bar], []}
   end
-
 end
