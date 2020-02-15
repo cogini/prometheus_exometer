@@ -137,7 +137,7 @@ defmodule PrometheusExometer.Metrics do
   # Histogram and Summary
 
   @doc "Observe current value for histogram or summary."
-  @spec observe(name, labels, float | integer) :: :ok | error
+  @spec observe(name, labels, number) :: :ok | error
   def observe(name, labels, value) when is_integer(value) do
     observe(name, labels, value / 1)
   end
