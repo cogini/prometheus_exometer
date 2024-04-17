@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-04-17
+### Added
+- Upgrade libraries
+
 ## [0.2.0] - 2020-01-24
 ### Added
 - Catch transient badarg errors from ets
