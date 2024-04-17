@@ -80,7 +80,7 @@ defmodule PrometheusExometer.MixProject do
     [
       description: description(),
       maintainers: ["Jake Morrison"],
-      licenses: ["Mozilla Public License 2.0"],
+      licenses: ["MPL-2.0"],
       links: %{
         "GitHub" => @github,
         "Changelog" =>
