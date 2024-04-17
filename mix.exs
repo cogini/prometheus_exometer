@@ -55,6 +55,7 @@ defmodule PrometheusExometer.MixProject do
 
   defp deps do
     [
+      {:castore, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
       # {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
