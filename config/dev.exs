@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :exometer_core,
   defaults: [
@@ -61,3 +61,7 @@ config :exometer_core,
     {[:requests], :prometheus_counter, [prometheus: %{description: "Total number of requests"}]},
     {[:responses], :prometheus_counter, [prometheus: %{description: "Total number of responses"}]}
   ]
+
+config :logger, :default_formatter,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:file, :line]
