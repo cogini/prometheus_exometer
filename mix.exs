@@ -97,7 +97,7 @@ defmodule PrometheusExometer.MixProject do
       extras: [
         "README.md",
         "CHANGELOG.md": [title: "Changelog"],
-        "LICENSE.md": [title: "License (Apache-2.0)"],
+        "LICENSE": [title: "License (Mozilla Public License 2.0)"],
         "CONTRIBUTING.md": [title: "Contributing"],
         "CODE_OF_CONDUCT.md": [title: "Code of Conduct"]
       ],
