@@ -63,7 +63,7 @@ defmodule PrometheusExometer.MixProject do
       # https://github.com/Feuerlabs/exometer_core/pull/101
       # https://github.com/uwiger/setup/issues/44
       # {:setup, "~> 2.0", override: true},
-      {:ex_doc, "~> 0.30.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.32.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18.0", only: [:dev, :test], runtime: false},
       {:junit_formatter, "~> 3.3", only: [:dev, :test], runtime: false},
       {:mix_audit, "~> 2.0", only: [:dev, :test], runtime: false}
