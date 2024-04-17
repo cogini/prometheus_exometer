@@ -8,7 +8,7 @@ defmodule PrometheusExometer.MixProject do
     [
       app: :prometheus_exometer,
       version: @version,
-      elixir: "~> 1.8",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       # build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
