@@ -21,7 +21,7 @@ defmodule PrometheusExometer.Convert do
     options = info[:options]
     prometheus_options = options[:prometheus] || %{}
     namespace = config[:namespace] || []
-    # Lager.debug("convert_name default #{inspect name} #{inspect info}")
+    # Logger.debug("convert_name default #{inspect name} #{inspect info}")
     {namespace ++ name ++ suffix(prometheus_options), []}
   end
 
@@ -29,10 +29,10 @@ defmodule PrometheusExometer.Convert do
     options = info[:options]
     prometheus_options = options[:prometheus] || %{}
     namespace = config[:namespace] || []
-    # Lager.debug("module #{module} name #{inspect name} options #{inspect options}")
+    # Logger.debug("module #{module} name #{inspect name} options #{inspect options}")
     case module.prometheus_convert_name(name, options) do
       {new_name, labels} ->
-        # Lager.debug("convert_name module #{module} #{inspect name} #{inspect new_name} #{inspect labels}")
+        # Logger.debug("convert_name module #{module} #{inspect name} #{inspect new_name} #{inspect labels}")
         name = namespace ++ new_name ++ suffix(prometheus_options)
         {name, labels}
 

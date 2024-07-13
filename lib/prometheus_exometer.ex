@@ -5,7 +5,7 @@ defmodule PrometheusExometer do
   """
   alias PrometheusExometer.FormatText
 
-  # require Lager
+  # require Logger
 
   @doc """
   Format data from Exometer metrics in Prometheus text format.
@@ -28,7 +28,7 @@ defmodule PrometheusExometer do
     entries = :exometer.find_entries([:_])
     entries = Enum.sort(entries)
 
-    # Lager.debug("entries: #{inspect entries, pretty: true, limit: 30_000}")
+    # Logger.debug("entries: #{inspect entries, pretty: true, limit: 30_000}")
 
     entry_info = List.foldl(entries, %{}, &collect_children/2)
 
@@ -40,8 +40,8 @@ defmodule PrometheusExometer do
     results =
       Enum.flat_map(entry_keys, fn name ->
         value = entry_info[name]
-        # Lager.debug("name: #{inspect name} #{inspect value.info}")
-        # Enum.each(value.children, &(Lager.debug("children: #{inspect &1, pretty: true}")))
+        # Logger.debug("name: #{inspect name} #{inspect value.info}")
+        # Enum.each(value.children, &(Logger.debug("children: #{inspect &1, pretty: true}")))
         FormatText.format_entry(value, config)
       end)
 
@@ -65,12 +65,12 @@ defmodule PrometheusExometer do
     case Map.fetch(prometheus_options, :parent) do
       :error ->
         # Parent or simple metric
-        # Lager.debug("parent #{inspect exometer_name} info #{inspect info}")
+        # Logger.debug("parent #{inspect exometer_name} info #{inspect info}")
         Map.put(parents, exometer_name, %{info: info, children: []})
 
       {:ok, parent_name} ->
         # Child, may also be a parent if it's a composite type
-        # Lager.debug("child #{inspect exometer_name} info #{inspect info}")
+        # Logger.debug("child #{inspect exometer_name} info #{inspect info}")
         if exometer_type in [:prometheus_counter, :prometheus_gauge, :prometheus_histogram] do
           # parents = Map.put(parents, exometer_name, %{info: info, children: []})
           update_in(parents[parent_name][:children], &(&1 ++ [info]))

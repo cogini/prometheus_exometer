@@ -5,7 +5,7 @@ defmodule PrometheusExometer.FormatText do
   #
   # They are internal, exported only so that they can be accessed by tests
 
-  # require Lager
+  # require Logger
 
   import PrometheusExometer.Convert
 
@@ -57,7 +57,7 @@ defmodule PrometheusExometer.FormatText do
     # [{sum: 0.0}, {:count, 0.0}, {50, "50}, {75, "75"}, {90, "90"}, {95, "95"}, {inf, "+Inf"}]
     {:ok, data_points} = :exometer.get_value(exometer_name)
 
-    # Lager.debug("data_points: #{inspect data_points}")
+    # Logger.debug("data_points: #{inspect data_points}")
 
     [
       if Map.get(prometheus_options, :export_buckets, false) do
@@ -76,7 +76,7 @@ defmodule PrometheusExometer.FormatText do
     # [{:n, 0.0}, {:mean, 0.0}, {:min, 0.0}, {:max, 0.0}, {:median, 0.0},
     # {50, 0.0}, {75, 0.0}, {90, 0.0}, {95, 0.0}, {99, 0.0}, {999, 0.0}]}
     {:ok, data_points} = :exometer.get_value(exometer_name)
-    # Lager.debug("data_points: #{inspect data_points}")
+    # Logger.debug("data_points: #{inspect data_points}")
     n = data_points[:n]
 
     [
@@ -137,7 +137,7 @@ defmodule PrometheusExometer.FormatText do
   end
 
   defp format_data(_name, _labels, _exometer_name, _exometer_type, _prometheus_options) do
-    # Lager.debug("Skipping #{inspect name} #{inspect labels} #{inspect exometer_name} #{inspect exometer_type} #{inspect prometheus_options}")
+    # Logger.debug("Skipping #{inspect name} #{inspect labels} #{inspect exometer_name} #{inspect exometer_type} #{inspect prometheus_options}")
     []
   end
 

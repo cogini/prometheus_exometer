@@ -117,7 +117,7 @@ metrics are there, though `PrometheusMiddleware.Metrics.update/2` would work as 
 ```elixir
 defmodule Foo.Middleware do
   @moduledoc "Cowboy middleware which records metrics"
-  require Lager
+  require Logger
 
   alias PrometheusMiddleware.Metrics
 
@@ -139,7 +139,7 @@ defmodule Foo.Middleware do
 
   # Called once by Cowboy on startup
   def init do
-    # Lager.debug("Creating Exometer metrics")
+    # Logger.debug("Creating Exometer metrics")
     :ok = :exometer.ensure(@metric_http_requests, :counter, prometheus: %{
                              description: "Total http requests"
                            })
@@ -187,7 +187,7 @@ defmodule Foo.Middleware do
   # Called at start of valid request
   # It will not be called on e.g. HTTP parse errors, though the response hook will be
   def execute(req, env) do
-    # Lager.debug("execute: #{inspect req} #{inspect env}")
+    # Logger.debug("execute: #{inspect req} #{inspect env}")
     :exometer.update(@metric_http_requests, 1)
     :exometer.update(@metric_http_active, 1)
 
@@ -215,7 +215,7 @@ defmodule Foo.Middleware do
         Metrics.observe_duration(@metric_http_duration, start_time)
         :exometer.update(@metric_http_active, -1)
     end
-    # Lager.debug("cowboy_response_hook: end #{code} #{inspect req2} #{inspect stats()}")
+    # Logger.debug("cowboy_response_hook: end #{code} #{inspect req2} #{inspect stats()}")
 
     # Pretend to be nginx
     headers2 = :lists.keyreplace("server", 1, headers, {"server", "nginx"})
