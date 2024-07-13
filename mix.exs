@@ -83,8 +83,7 @@ defmodule PrometheusExometer.MixProject do
       licenses: ["MPL-2.0"],
       links: %{
         "GitHub" => @github,
-        "Changelog" =>
-          "#{@github}/blob/#{@version}/CHANGELOG.md##{String.replace(@version, ".", "")}"
+        "Changelog" => "#{@github}/blob/#{@version}/CHANGELOG.md##{String.replace(@version, ".", "")}"
       }
     ]
   end
@@ -97,7 +96,7 @@ defmodule PrometheusExometer.MixProject do
       extras: [
         "README.md",
         "CHANGELOG.md": [title: "Changelog"],
-        "LICENSE": [title: "License (Mozilla Public License 2.0)"],
+        LICENSE: [title: "License (Mozilla Public License 2.0)"],
         "CONTRIBUTING.md": [title: "Contributing"],
         "CODE_OF_CONDUCT.md": [title: "Code of Conduct"]
       ],
