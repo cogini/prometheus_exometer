@@ -2,7 +2,7 @@ defmodule PrometheusExometer.MixProject do
   use Mix.Project
 
   @github "https://github.com/cogini/prometheus_exometer"
-  @version "0.3.0"
+  @version "0.3.1"
 
   def project do
     [
@@ -10,7 +10,7 @@ defmodule PrometheusExometer.MixProject do
       version: @version,
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      # build_embedded: Mix.env() == :prod,
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       dialyzer: [
@@ -58,12 +58,7 @@ defmodule PrometheusExometer.MixProject do
       {:castore, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
-      # {:exometer_core, github: "Feuerlabs/exometer_core", tag: "1.5.0"},
       {:exometer_core, "~> 2.0"},
-      # {:setup, github: "uwiger/setup", manager: :rebar, override: true}, # fix for https://github.com/uwiger/setup/issues/24
-      # https://github.com/Feuerlabs/exometer_core/pull/101
-      # https://github.com/uwiger/setup/issues/44
-      # {:setup, "~> 2.0", override: true},
       {:ex_doc, "~> 0.34.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18.0", only: [:dev, :test], runtime: false},
       {:junit_formatter, "~> 3.3", only: [:dev, :test], runtime: false},
