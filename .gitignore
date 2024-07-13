@@ -25,4 +25,5 @@ prometheus_exometer-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
+# macOS junk
 .DS_Store
