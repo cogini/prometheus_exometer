@@ -64,8 +64,7 @@ defmodule PrometheusExometer.Convert do
   @spec split_name_labels(:exometer.name(), map) :: {:exometer.name(), list}
   def split_name_labels(exometer_name, prometheus_options)
 
-  def split_name_labels(exometer_name, %{parent: parent}),
-    do: {parent, strip_prefix(parent, exometer_name)}
+  def split_name_labels(exometer_name, %{parent: parent}), do: {parent, strip_prefix(parent, exometer_name)}
 
   def split_name_labels(exometer_name, _options), do: {exometer_name, []}
 

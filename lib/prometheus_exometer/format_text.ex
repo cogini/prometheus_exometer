@@ -166,8 +166,7 @@ defmodule PrometheusExometer.FormatText do
   @spec format_description(map | nil, :exometer.name()) :: binary
   def format_description(prometheus_options, exometer_name)
 
-  def format_description(%{description: description}, _) when is_binary(description),
-    do: description
+  def format_description(%{description: description}, _) when is_binary(description), do: description
 
   def format_description(_, exometer_name), do: inspect(exometer_name)
 
@@ -175,8 +174,7 @@ defmodule PrometheusExometer.FormatText do
   def format_label(label) when is_binary(label), do: label
   def format_label(label) when is_atom(label), do: to_string(label)
 
-  def format_label({key, value} = label) when is_tuple(label),
-    do: [to_string(key), "=\"", to_string(value), "\""]
+  def format_label({key, value} = label) when is_tuple(label), do: [to_string(key), "=\"", to_string(value), "\""]
 
   @spec format_labels(labels) :: list
   def format_labels([]), do: []
