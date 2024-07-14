@@ -14,19 +14,20 @@ which is more natural for Prometheus, e.g..
 
     api_http_requests_total{method="POST", handler="/messages"}
 
-It does this by converting the labels into keyword=value atoms which it appends to the
-Exometer name, which is normally a list of atoms. The Erlang VM has a relatively small fixed
-limit on the number of atoms. Because of this, you should not create labels in response to
-external input, you should limit the atoms to a relatively small set that you control.
+It does this by converting the labels into keyword=value atoms which it appends
+to the Exometer name, which is normally a list of atoms. The Erlang VM has a
+relatively small fixed limit on the number of atoms. Because of this, you
+should not create labels in response to external input, you should limit the
+atoms to a relatively small set that you control.
 
 ## Example
 
-An example of creating metrics is to record atom codes for handler,
-action, and detail on responses. The handler indicates the module which created
-the response. The action is a standard set like "success", "redirect",
-"reject", "error", similar to HTTP 200/300/400/500 responses. Detail depends on the module,
-e.g. if we reject DDOS traffic based on the HTTP user agent, it might be
-"agent.
+An example of creating metrics is to record atom codes for handler, action, and
+detail on responses. The handler indicates the module which created the
+response. The action is a standard set like "success", "redirect", "reject",
+"error", similar to HTTP 200/300/400/500 responses. Detail depends on the
+module, e.g. if we reject DDOS traffic based on the HTTP user agent, it might
+be "agent.
 
 The result might look something like this for an API service:
 
@@ -41,11 +42,12 @@ The result might look something like this for an API service:
 
 ## Prometheus histograms vs Exometer histograms
 
-There is a fundamental difference between Exometer histograms and Exometer histograms.
-Exometer histogram buckets are dynamic, so when you get e.g. the 95% bucket, it depends
-on the actual samples. Prometheus histograms have a static range, and are perhaps best
-thought of as having multiple counters, one for each bucket. Because of this, we need
-to predefine the bucket ranges that we will use.
+There is a fundamental difference between Exometer histograms and Prometheus
+histograms. Exometer histogram buckets are dynamic, so when you get e.g. the
+95% bucket, it depends on the actual samples. Prometheus histograms have a
+static range, and are perhaps best thought of as having multiple counters, one
+for each bucket. Because of this, we need to predefine the bucket ranges that
+we will use.
 
 ## Installation
 
@@ -106,13 +108,14 @@ library call `:exometer.update_or_create/2`. The effect is that the metric will
 be created the first time it is used based on the settings in the
 `defaults` section of the `exometer_core` config.
 
-If you have specific settings that you want, e.g. histogram buckets, then you
+If you have specific settings that you want, e.g., histogram buckets, then you
 should define the metric before you use it, either in the `predefined` section
 or in your application initialization.
 
-Following is an example Cowboy "middleware" which uses an init function to
-create metrics. It uses the low level `:exometer.update/2` since it knows that the
-metrics are there, though `PrometheusMiddleware.Metrics.update/2` would work as well.
+Following is an example Cowboy "middleware" that uses an init function to
+create metrics. It uses the low level `:exometer.update/2`, since it knows that
+the metrics are there, though `PrometheusMiddleware.Metrics.update/2` would
+work as well.
 
 ```elixir
 defmodule Foo.Middleware do
@@ -149,7 +152,7 @@ defmodule Foo.Middleware do
                            })
 
     # Create metrics for each of the status codes
-    # TODO: the code is actually a string, e.g. "200 OK", so this doesn't really work
+    # TODO: the code is actually a string, e.g., "200 OK", so this doesn't really work
     for code <- @status_codes do
       Metrics.ensure_child(@metric_http_responses, code: code)
     end
@@ -185,7 +188,7 @@ defmodule Foo.Middleware do
   end
 
   # Called at start of valid request
-  # It will not be called on e.g. HTTP parse errors, though the response hook will be
+  # It will not be called on e.g., HTTP parse errors, though the response hook will be
   def execute(req, env) do
     # Logger.debug("execute: #{inspect req} #{inspect env}")
     :exometer.update(@metric_http_requests, 1)
@@ -211,13 +214,14 @@ defmodule Foo.Middleware do
     {start_time, req} = :cowboy_req.meta(:foo_start_time, req)
     case start_time do
       :undefined -> :ok
+
       _ ->
         Metrics.observe_duration(@metric_http_duration, start_time)
         :exometer.update(@metric_http_active, -1)
     end
     # Logger.debug("cowboy_response_hook: end #{code} #{inspect req2} #{inspect stats()}")
 
-    # Pretend to be nginx
+    # Pretend to be Nginx
     headers2 = :lists.keyreplace("server", 1, headers, {"server", "nginx"})
     {:ok, req} = :cowboy_req.reply(code, headers2, body, req)
     req
@@ -276,7 +280,8 @@ api_cowboy_http_responses{code="404 Not Found"} 10
 
 # Sampling metrics
 
-`PrometheusExometer.SampleMetrics` is a GenServer which periodically updates metrics by calling functions.
+`PrometheusExometer.SampleMetrics` is a GenServer that periodically updates
+metrics by calling functions.
 
 Put this in `config/config.exs`:
 
