@@ -10,7 +10,7 @@ handler to respond to metrics requests, or you can add a route/endpoint to
 
 This module supports the standard Exometer probe types such as counter,
 as well as using [labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels),
-which is more natural for Prometheus, e.g..
+which is more natural for Prometheus, e.g.:
 
     api_http_requests_total{method="POST", handler="/messages"}
 
@@ -43,7 +43,7 @@ The result might look something like this for an API service:
 ## Prometheus histograms vs Exometer histograms
 
 There is a fundamental difference between Exometer histograms and Prometheus
-histograms. Exometer histogram buckets are dynamic, so when you get e.g. the
+histograms. Exometer histogram buckets are dynamic, so when you get e.g., the
 95% bucket, it depends on the actual samples. Prometheus histograms have a
 static range, and are perhaps best thought of as having multiple counters, one
 for each bucket. Because of this, we need to predefine the bucket ranges that
@@ -64,7 +64,7 @@ This will pull in Exometer and its dependencies.
 
 Configure Exometer to use the custom
 [probes](https://github.com/Feuerlabs/exometer_core/blob/master/doc/README.md#Built-in_entries_and_probes)
-defined in this module, e.g. in `config/config.exs`.
+defined in this module, e.g., in `config/config.exs`.
 
 ```elixir
 config :exometer_core,
